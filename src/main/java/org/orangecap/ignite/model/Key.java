@@ -1,5 +1,7 @@
 package org.orangecap.ignite.model;
 
+import java.util.Date;
+
 public class Key {
   private int securityId;
   private long date;
@@ -21,6 +23,14 @@ public class Key {
     return date;
   }
 
+  public void setSecurityId(int securityId) {
+    this.securityId = securityId;
+  }
+
+  public void setDate(long date) {
+    this.date = date;
+  }
+
   @Override
   public boolean equals(Object o) {
     if (this == o) return true;
@@ -36,5 +46,13 @@ public class Key {
     int result = securityId;
     result = 31 * result + (int) (date ^ (date >>> 32));
     return result;
+  }
+
+  @Override
+  public String toString() {
+    return "Key{" +
+      "securityId=" + securityId +
+      ", date=" + new Date(date) +
+      '}';
   }
 }

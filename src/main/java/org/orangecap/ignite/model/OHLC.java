@@ -1,5 +1,7 @@
 package org.orangecap.ignite.model;
 
+import java.util.Arrays;
+
 public class OHLC {
   private long date;
   private int securityId;
@@ -28,6 +30,14 @@ public class OHLC {
     this.size = time.length;
   }
 
+  public int getSecurityId() {
+    return securityId;
+  }
+
+  public void setSecurityId(int securityId) {
+    this.securityId = securityId;
+  }
+
   public double[] getOpen() {
     return open;
   }
@@ -48,15 +58,62 @@ public class OHLC {
     return marketVWAP;
   }
 
-  public int getSecurityId() {
-    return securityId;
-  }
-
   public long[] getTime() {
     return time;
   }
 
   public int getSize() {
     return size;
+  }
+
+  public long getDate() {
+    return date;
+  }
+
+  public void setDate(long date) {
+    this.date = date;
+  }
+
+  public void setSize(int size) {
+    this.size = size;
+  }
+
+  public void setTime(long[] time) {
+    this.time = time;
+  }
+
+  public void setOpen(double[] open) {
+    this.open = open;
+  }
+
+  public void setHigh(double[] high) {
+    this.high = high;
+  }
+
+  public void setLow(double[] low) {
+    this.low = low;
+  }
+
+  public void setClose(double[] close) {
+    this.close = close;
+  }
+
+  public void setMarketVWAP(double[] marketVWAP) {
+    this.marketVWAP = marketVWAP;
+  }
+
+  @Override
+  public String toString() {
+    return "OHLC{" +
+      "date=" + date +
+      ", securityId=" + securityId +
+      ", size=" + size +
+      ", time=" + Arrays.toString(time) +
+      ", open=" + Arrays.toString(open) +
+      ", high=" + Arrays.toString(high) +
+      ", low=" + Arrays.toString(low) +
+      ", close=" + Arrays.toString(close) +
+      ", marketVWAP=" + Arrays.toString(marketVWAP) +
+      '}';
   }
 }
