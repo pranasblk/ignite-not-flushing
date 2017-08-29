@@ -1,8 +1,9 @@
 package org.orangecap.ignite.model;
 
+import java.io.Serializable;
 import java.util.Date;
 
-public class Key {
+public class Key implements Serializable {
   private int securityId;
   private long date;
 

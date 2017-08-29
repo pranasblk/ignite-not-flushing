@@ -5,123 +5,131 @@
 -->
 <beans xmlns="http://www.springframework.org/schema/beans"
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-       xmlns:util="http://www.springframework.org/schema/util"
-       xsi:schemaLocation="
-        http://www.springframework.org/schema/beans
-        http://www.springframework.org/schema/beans/spring-beans.xsd
-        http://www.springframework.org/schema/util
-        http://www.springframework.org/schema/util/spring-util.xsd">
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+        http://www.springframework.org/schema/beans/spring-beans.xsd">
 
 
-    <bean id="ignite.cfg" class="org.apache.ignite.configuration.IgniteConfiguration">
-        <property name="clientMode" value="false"/>
-        <property name="peerClassLoadingEnabled" value="true"/>
+  <bean id="ignite.cfg" class="org.apache.ignite.configuration.IgniteConfiguration">
+    <property name="clientMode" value="false"/>
+    <property name="peerClassLoadingEnabled" value="true"/>
 
-        <property name="cacheConfiguration">
+    <property name="sqlConnectorConfiguration">
+      <bean class="org.apache.ignite.configuration.SqlConnectorConfiguration"/>
+    </property>
+
+    <property name="cacheConfiguration">
+      <list>
+
+        <!-- Values cache -->
+        <bean class="org.apache.ignite.configuration.CacheConfiguration">
+          <property name="name" value="OHLC"/>
+          <property name="backups" value="0"/>
+          <property name="atomicityMode" value="ATOMIC"/>
+
+          <!-- Indexed types -->
+          <property name="indexedTypes">
             <list>
-
-                <!-- Values cache -->
-                <bean class="org.apache.ignite.configuration.CacheConfiguration">
-                    <property name="name" value="OHLC"/>
-                    <property name="backups" value="0"/>
-                    <property name="atomicityMode" value="ATOMIC"/>
-
-                    <property name="queryEntities">
-                        <list>
-                            <bean class="org.apache.ignite.cache.QueryEntity">
-
-                                <!-- Key Type -->
-                                <property name="keyType" value="org.orangecap.ignite.model.Key"/>
-
-                                <!-- Value Type -->
-                                <property name="valueType" value="org.orangecap.ignite.model.OHLC"/>
-
-                                <!-- Fields to be used from SQL -->
-                                <property name="fields">
-                                    <map>
-                                        <entry key="securityId" value="java.lang.Integer"/>
-                                        <entry key="time" value="java.lang.Long"/>
-                                        <entry key="open" value="java.lang.Double"/>
-                                        <entry key="high" value="java.lang.Double"/>
-                                        <entry key="low" value="java.lang.Double"/>
-                                        <entry key="close" value="java.lang.Double"/>
-                                        <entry key="marketVWAP" value="java.lang.Double"/>
-                                    </map>
-                                </property>
-
-                                <!-- Indexes configuration. -->
-                                <property name="indexes">
-                                    <list>
-                                        <bean class="org.apache.ignite.cache.QueryIndex">
-                                            <property name="fields">
-                                                <map>
-                                                    <!-- The boolean value is the acceding flag. -->
-                                                    <entry key="securityId" value="true"/>
-                                                    <entry key="time" value="true"/>
-                                                </map>
-                                            </property>
-                                        </bean>
-                                    </list>
-                                </property>
-
-                            </bean>
-                       </list>
-                    </property>
-                </bean>
-
-                <!-- Config -->
-                <bean class="org.apache.ignite.configuration.CacheConfiguration">
-                    <property name="name" value="OHLCV"/>
-                    <property name="backups" value="0"/> <!-- Journal is the primary source for recovery -->
-
-                    <!-- Setting expiration policy -->
-                    <property name="expiryPolicyFactory">
-                        <bean class="javax.cache.configuration.FactoryBuilder" factory-method="factoryOf">
-                            <constructor-arg>
-                                <bean class="javax.cache.expiry.CreatedExpiryPolicy">
-                                    <constructor-arg>
-                                        <bean class="javax.cache.expiry.Duration">
-                                            <!-- 24 hours expiration -->
-                                            <constructor-arg index="0" value="HOURS"/>
-                                            <constructor-arg index="1" value="24"/>
-                                        </bean>
-                                    </constructor-arg>
-                                </bean>
-                            </constructor-arg>
-                        </bean>
-                    </property>
-
-                    <property name="eagerTtl" value="true"/>
-                </bean>
+              <value>org.orangecap.ignite.model.Key</value>
+              <value>org.orangecap.ignite.model.OHLC</value>
             </list>
-        </property>
+          </property>
 
-        <!-- Setting up affinity collocation with Spring XML configuration. -->
-        <property name="cacheKeyConfiguration">
+          <property name="queryEntities">
             <list>
-                <bean class="org.apache.ignite.cache.CacheKeyConfiguration">
-                    <property name="typeName" value="org.orangecap.ignite.model.Key"/>
-                    <property name="affinityKeyFieldName" value="securityId"/>
-                </bean>
-            </list>
-        </property>
+              <bean class="org.apache.ignite.cache.QueryEntity">
 
+                <!-- Key Type -->
+                <property name="keyType" value="org.orangecap.ignite.model.Key"/>
 
-        <!-- Explicitly configure TCP discovery SPI to provide list of initial nodes. -->
-        <property name="discoverySpi">
-            <bean class="org.apache.ignite.spi.discovery.tcp.TcpDiscoverySpi">
-                <property name="ipFinder">
-                    <!-- Uncomment static IP finder to enable static-based discovery of initial nodes. -->
-                    <bean class="org.apache.ignite.spi.discovery.tcp.ipfinder.vm.TcpDiscoveryVmIpFinder">
-                        <property name="addresses">
-                            <list>
-                                <!-- In distributed environment, replace with actual host IP address. -->
-                                <value>127.0.0.1:47500..47509</value>
-                            </list>
-                        </property>
-                    </bean>
+                <!-- Value Type -->
+                <property name="valueType" value="org.orangecap.ignite.model.OHLC"/>
+
+                <!-- Fields to be used from SQL -->
+                <property name="fields">
+                  <map>
+                    <entry key="securityId" value="java.lang.Integer"/>
+                    <entry key="time" value="java.lang.Long"/>
+                    <entry key="open" value="java.lang.Double"/>
+                    <entry key="high" value="java.lang.Double"/>
+                    <entry key="low" value="java.lang.Double"/>
+                    <entry key="close" value="java.lang.Double"/>
+                    <entry key="marketVWAP" value="java.lang.Double"/>
+                  </map>
                 </property>
+
+                <!-- Indexes configuration. -->
+                <property name="indexes">
+                  <list>
+                    <bean class="org.apache.ignite.cache.QueryIndex">
+                      <property name="fields">
+                        <map>
+                          <!-- The boolean value is the acceding flag. -->
+                          <entry key="securityId" value="true"/>
+                          <entry key="time" value="true"/>
+                        </map>
+                      </property>
+                    </bean>
+                  </list>
+                </property>
+
+              </bean>
+            </list>
+          </property>
+        </bean>
+
+        <!-- Config -->
+        <bean class="org.apache.ignite.configuration.CacheConfiguration">
+          <property name="name" value="OHLCV"/>
+          <property name="backups" value="0"/> <!-- Journal is the primary source for recovery -->
+
+          <!-- Setting expiration policy -->
+          <property name="expiryPolicyFactory">
+            <bean class="javax.cache.configuration.FactoryBuilder" factory-method="factoryOf">
+              <constructor-arg>
+                <bean class="javax.cache.expiry.CreatedExpiryPolicy">
+                  <constructor-arg>
+                    <bean class="javax.cache.expiry.Duration">
+                      <!-- 24 hours expiration -->
+                      <constructor-arg index="0" value="HOURS"/>
+                      <constructor-arg index="1" value="24"/>
+                    </bean>
+                  </constructor-arg>
+                </bean>
+              </constructor-arg>
             </bean>
+          </property>
+
+          <property name="eagerTtl" value="true"/>
+        </bean>
+      </list>
+    </property>
+
+    <!-- Setting up affinity collocation with Spring XML configuration. -->
+    <property name="cacheKeyConfiguration">
+      <list>
+        <bean class="org.apache.ignite.cache.CacheKeyConfiguration">
+          <property name="typeName" value="org.orangecap.ignite.model.Key"/>
+          <property name="affinityKeyFieldName" value="securityId"/>
+        </bean>
+      </list>
+    </property>
+
+
+    <!-- Explicitly configure TCP discovery SPI to provide list of initial nodes. -->
+    <property name="discoverySpi">
+      <bean class="org.apache.ignite.spi.discovery.tcp.TcpDiscoverySpi">
+        <property name="ipFinder">
+          <!-- Uncomment static IP finder to enable static-based discovery of initial nodes. -->
+          <bean class="org.apache.ignite.spi.discovery.tcp.ipfinder.vm.TcpDiscoveryVmIpFinder">
+            <property name="addresses">
+              <list>
+                <!-- In distributed environment, replace with actual host IP address. -->
+                <value>127.0.0.1:47500..47509</value>
+              </list>
+            </property>
+          </bean>
         </property>
-    </bean>
+      </bean>
+    </property>
+  </bean>
 </beans>

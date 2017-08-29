@@ -1,8 +1,9 @@
 package org.orangecap.ignite.model;
 
+import java.io.Serializable;
 import java.util.Arrays;
 
-public class OHLC {
+public class OHLC implements Serializable {
   private long date;
   private int securityId;
   private int size;

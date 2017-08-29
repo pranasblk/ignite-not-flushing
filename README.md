@@ -1,4 +1,4 @@
 # ignite-not-flushing
-Suspected Ignite bug with flushing
 
-Getting only 1 entry in the cache instead of ~22222
+JVM Options:
+-XX:+UseG1GC  -Xmx4g -XX:MaxDirectMemorySize=8g -XX:+DisableExplicitGC
