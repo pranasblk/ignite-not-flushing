@@ -63,7 +63,7 @@ public class IgniteNode {
 
     System.out.println(" >>> Apache Ignite node is up and running.");
 
-    long date = 0L;
+    long date = System.nanoTime();
     final Key key = new Key();
     final OHLC value = new OHLC();
     final IgniteCache<Object, Object> cache = ignite.getOrCreateCache(CACHE_NAME);
@@ -84,7 +84,6 @@ public class IgniteNode {
 
     // JDBC Thin driver
     testJDBC();
-
 
     // End
     System.out.println(" >>> Simulator - finished checks " + new Date());
@@ -115,7 +114,7 @@ public class IgniteNode {
 
     // Spark Conf
     final SparkConf sparkConf = new SparkConf()
-      .setAppName("CACHE_NAME")
+      .setAppName(CACHE_NAME)
       .setMaster("local")
       .set("spark.executor.instances", "2");
 
@@ -198,12 +197,11 @@ public class IgniteNode {
         }
 
         // Add to the cache
-        key.setSecurityId(secId);
         key.setDate(date);
+        key.setSecurityId(secId);
 
-        value.setSize(time.length);
-        value.setSecurityId(secId);
-        value.setDate(date);
+        value.setTime(time); // BUG  in providing it via JDBC
+
         value.setOpen(open);
         value.setHigh(high);
         value.setLow(low);
@@ -220,6 +218,7 @@ public class IgniteNode {
       }
       streamer.flush();
     }
+    ignite.active(true);
   }
 
   /**

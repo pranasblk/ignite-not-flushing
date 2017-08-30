@@ -3,15 +3,26 @@ package org.orangecap.ignite.model;
 import java.io.Serializable;
 import java.util.Arrays;
 
+import org.apache.ignite.cache.query.annotations.QuerySqlField;
+
 public class OHLC implements Serializable {
-  private long date;
-  private int securityId;
-  private int size;
+
+  @QuerySqlField() //Apache Ignite 2.1 BUG
   private long[] time;
+
+  @QuerySqlField()
   private double[] open;
+
+  @QuerySqlField()
   private double[] high;
+
+  @QuerySqlField()
   private double[] low;
+
+  @QuerySqlField()
   private double[] close;
+
+  @QuerySqlField()
   private double[] marketVWAP;
 
   public OHLC() {
@@ -20,23 +31,12 @@ public class OHLC implements Serializable {
 
   public OHLC(int securityId, long date, long[] time, double[] open, double[] high, double[] low, double[] close,
     double[] marketVWAP) {
-    this.securityId = securityId;
-    this.date = date;
     this.time = time;
     this.open = open;
     this.high = high;
     this.low = low;
     this.close = close;
     this.marketVWAP = marketVWAP;
-    this.size = time.length;
-  }
-
-  public int getSecurityId() {
-    return securityId;
-  }
-
-  public void setSecurityId(int securityId) {
-    this.securityId = securityId;
   }
 
   public double[] getOpen() {
@@ -61,22 +61,6 @@ public class OHLC implements Serializable {
 
   public long[] getTime() {
     return time;
-  }
-
-  public int getSize() {
-    return size;
-  }
-
-  public long getDate() {
-    return date;
-  }
-
-  public void setDate(long date) {
-    this.date = date;
-  }
-
-  public void setSize(int size) {
-    this.size = size;
   }
 
   public void setTime(long[] time) {
@@ -106,9 +90,6 @@ public class OHLC implements Serializable {
   @Override
   public String toString() {
     return "OHLC{" +
-      "date=" + date +
-      ", securityId=" + securityId +
-      ", size=" + size +
       ", time=" + Arrays.toString(time) +
       ", open=" + Arrays.toString(open) +
       ", high=" + Arrays.toString(high) +

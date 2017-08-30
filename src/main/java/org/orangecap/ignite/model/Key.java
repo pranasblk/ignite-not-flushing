@@ -1,11 +1,17 @@
 package org.orangecap.ignite.model;
 
 import java.io.Serializable;
-import java.util.Date;
+
+import org.apache.ignite.cache.query.annotations.QuerySqlField;
 
 public class Key implements Serializable {
-  private int securityId;
+  @QuerySqlField(orderedGroups = {@QuerySqlField.Group(
+    name = "date_sec_idx", order = 0, descending = true)})
   private long date;
+
+  @QuerySqlField(index = true, orderedGroups = {@QuerySqlField.Group(
+    name = "date_sec_idx", order = 3)})
+  private int securityId;
 
   public Key() {
     // Required for default binary serialization
@@ -30,30 +36,5 @@ public class Key implements Serializable {
 
   public void setDate(long date) {
     this.date = date;
-  }
-
-  @Override
-  public boolean equals(Object o) {
-    if (this == o) return true;
-    if (!(o instanceof Key)) return false;
-
-    Key key = (Key) o;
-
-    return securityId == key.securityId && date == key.date;
-  }
-
-  @Override
-  public int hashCode() {
-    int result = securityId;
-    result = 31 * result + (int) (date ^ (date >>> 32));
-    return result;
-  }
-
-  @Override
-  public String toString() {
-    return "Key{" +
-      "securityId=" + securityId +
-      ", date=" + new Date(date) +
-      '}';
   }
 }
